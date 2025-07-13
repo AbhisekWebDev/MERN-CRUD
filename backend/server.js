@@ -13,7 +13,7 @@ mongoose.connect(process.env.MONGO_URI)
 .then(() => console.log('connected'))
 .catch((err) => console.log('error', err))
 
-const studentRoutes = require('./routs/studentRoutes') // Import routes
+const studentRoutes = require('./routs/studentRoutes') // import routes
 app.use('/students', studentRoutes)
 
 app.get('/', (req, res) => {
