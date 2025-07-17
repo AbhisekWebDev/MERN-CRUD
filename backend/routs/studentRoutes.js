@@ -1,14 +1,36 @@
 const express = require('express')
 const Student = require('../models/studentModel')
 
+// importing multer and path
+const path = require('path')
+const multer = require('multer')
+
 const router = express.Router()
 
-// create students
-router.post('/register', async (req, res) => {
+// route - to upload images
+// file ko store krna
+const storage = multer.diskStorage({
+    destination : (req, file, callBack) => {
+        callBack(null, 'uploads/') // uploads folder k andr
+    },
+    filename : (req, file, callBack) => {
+        //original file extension lena
+        const extension = path.extname(file.originalname)
+        callBack(null, Date.now() + extension)
+    }
+})
+const upload = multer({storage})
+
+// create students      // post method to upload image
+router.post('/register', upload.single('image'), async (req, res) => {
     try {
         console.log('Request Body:', req.body)
         const { name, email, age } = req.body;
-        const student = new Student({ name, email, age })
+
+        // image k lye
+        const image = req.file ? `/uploads/${req.file.filename}` : null
+
+        const student = new Student({ name, email, age, image })
         await student.save()
         res.status(201).json(student)
     } catch (err) {
@@ -40,12 +62,20 @@ router.get('/viewStudent/:id', async (req, res) => {
     }
 })
 
-// update student details
-router.put('/viewStudent/:id', async (req, res) => {
+// update student details      // put method to update image
+router.put('/viewStudent/:id', upload.single('image'), async (req, res) => {
     try {
+
+        // image k lye kr rhe h
+        const {name, email, age} = req.body
+        const updateFields = {name, email, age}
+        if(req.file)
+            updateFields.image = `/uploads/${req.file.filename}`
+
         const updatedStudent = await Student.findByIdAndUpdate(
             req.params.id,
-            req.body,
+            // req.body
+            updateFields,
             { new: true }
         );
         if (!updatedStudent) {

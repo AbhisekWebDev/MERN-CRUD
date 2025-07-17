@@ -15,6 +15,10 @@ function Update() {
         }
     )
 
+    // file update k lye - state
+        const [file, setFile] = useState(null)
+    
+
     const handleChange = (e) => {
         setUpdateData(
             {
@@ -33,14 +37,25 @@ function Update() {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+
+        // image add krna aur saare data ko opject k andr append krwana
+        const data = new FormData()
+        data.append('name', updateData.name)
+        data.append('email', updateData.email)
+        data.append('age', updateData.age)
+        data.append('image', file)
+
         try {
             // put - to update data
-            await axios.put(`http://localhost:5000/students/viewStudent/${id}`, updateData)
+            await axios.put(`http://localhost:5000/students/viewStudent/${id}`, data, {
+              headers : {'Content-Type' : 'multipart/form-data'}
+            })
             alert('update success')
         } catch(err) {
             alert('Error adding user')
             console.log(err)
         }
+        console.log(data)
     }
 
   return (
@@ -83,6 +98,19 @@ function Update() {
                       name="age"  // ye dena zruri h
                       value={updateData.age}
                       onChange={handleChange}
+                  />
+              </div>
+              <div className="form-group text-start mb-3">
+                  <label htmlFor="exampleInputImage">Upload Image</label>
+                  <input
+                      type="file"  // ye dena zruri h
+                      className="form-control"
+                      id="exampleInputImage"
+                      placeholder="Enter Image"
+                      name="image"  // ye dena zruri h
+                      // value={formData.image}
+                      accept='image/*'
+                      onChange={(e) => setFile(e.target.files[0])}
                   />
               </div>
               <button type="submit" className="btn btn-primary">Submit</button>

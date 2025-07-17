@@ -11,6 +11,9 @@ function Form() {
         }
     )
 
+    // file upload k lye - state
+    const [file, setFile] = useState(null)
+
     const handleChange = (e) => {
         setFormData(
             {
@@ -23,8 +26,17 @@ function Form() {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+        // image add krna aur saare data ko opject k andr append krwana
+        const data = new FormData()
+        data.append('name', formData.name)
+        data.append('email', formData.email)
+        data.append('age', formData.age)
+        data.append('image', file)
+
         try {
-            await axios.post('http://localhost:5000/students/register', formData)
+            await axios.post('http://localhost:5000/students/register', data, {
+              headers : {'Content-Type' : 'multipart/form-data'}
+            })
             alert('success')
             setFormData(
                 {
@@ -33,6 +45,7 @@ function Form() {
                     age : ''
                 }
             )
+            setFile(null)
         } catch(err) {
             alert('Error adding user')
             console.log(err)
@@ -79,6 +92,19 @@ function Form() {
             name="age"  // ye dena zruri h
             value={formData.age}
             onChange={handleChange}
+          />
+        </div>
+        <div className="form-group text-start mb-3">
+          <label htmlFor="exampleInputImage">Upload Image</label>
+          <input
+            type="file"  // ye dena zruri h
+            className="form-control"
+            id="exampleInputImage"
+            placeholder="Enter Image"
+            name="image"  // ye dena zruri h
+            // value={formData.image}
+            accept='image/*'
+            onChange={(e) => setFile(e.target.files[0])}
           />
         </div>
         <button type="submit" className="btn btn-primary">Submit</button>

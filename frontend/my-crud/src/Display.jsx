@@ -18,6 +18,7 @@ function Display() {
     // delete operation
     const handleDelete = async (id) => {
         const cnfDlt = window.confirm("Pakka udana h?")
+        
         if(!cnfDlt) return
 
         try{
@@ -42,6 +43,7 @@ function Display() {
             <thead>
               <tr className='table-secondary'>
                 <th scope="col">ID</th>
+                <th scope="col">Image</th>
                 <th scope="col">Name</th>
                 <th scope="col">Email</th>
                 <th scope="col">Age</th>
@@ -54,6 +56,15 @@ function Display() {
               students.map((student, index) => (
                 <tr className="table-secondary" key={index}>
                   <td>{student._id}</td>
+
+                  {/* image k lye */}
+                  <td className="table-success">
+                    <img
+                      src={`http://localhost:5000${student.image}`}
+                      alt={student.image}
+                      style={{ width: '50px', height: '50px', objectFit: 'cover' }}
+                    />
+                  </td>
                   <td className="table-success">{student.name}</td>
                   <td className="table-success">{student.email}</td>
                   <td className="table-success">{student.age}</td>
